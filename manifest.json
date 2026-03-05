@@ -1,0 +1,21 @@
+{
+    "name": "Éclat Bistro",
+    "short_name": "Éclat",
+    "description": "Premium fine dining Franco-Indian cuisine in Bhubaneswar.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1a1a1a",
+    "theme_color": "#D4AF37",
+    "icons": [
+        {
+            "src": "https://img.icons8.com/color/192/000000/restaurant-menu.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://img.icons8.com/color/512/000000/restaurant-menu.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

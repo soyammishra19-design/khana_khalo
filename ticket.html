@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éclat Bistro | Reservation Ticket</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --charcoal: #1a1a1a;
+            --gold: #D4AF37;
+            --white: #F8F1E9;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--charcoal);
+            background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        .ticket-card {
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(20, 20, 20, 0.9));
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(212, 175, 55, 0.2);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gold);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-svg {
+            width: 60px;
+            height: 60px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            color: var(--gold);
+            font-size: 2.2rem;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .detail-group {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--white);
+        }
+
+        .guest-name {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-style: italic;
+            text-align: center;
+            margin: 15px 0 25px 0;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        #error-msg {
+            display: none;
+            color: #ff4d4d;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay"></div>
+    <div class="ticket-card" id="ticket-card" style="display: none;">
+        <svg class="logo-svg" viewBox="0 0 100 100">
+            <path d="M50 10 C30 10 15 25 10 50 C15 75 30 90 50 90 C70 90 85 75 90 50 C85 25 70 10 50 10 Z" fill="none"
+                stroke="currentColor" stroke-width="4"></path>
+            <path d="M35 50 Q50 30 65 50 Q50 70 35 50" fill="currentColor"></path>
+        </svg>
+        <h1>Éclat Bistro</h1>
+        <span class="subtitle">Official Reservation</span>
+
+        <h2 class="guest-name" id="display-name">Guest Name</h2>
+
+        <div class="detail-group">
+            <div class="detail-item">
+                <span class="detail-label">Date</span>
+                <span class="detail-value" id="display-date">--</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Time</span>
+                <span class="detail-value" id="display-time">--</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Party Size</span>
+                <span class="detail-value" id="display-party">-- Guests</span>
+            </div>
+        </div>
+
+        <p class="footer-note">Please present this digital ticket to the host upon arrival.</p>
+    </div>
+
+    <div id="error-msg">
+        <h2>Invalid Booking Detail</h2>
+        <p>No valid reservation data was found.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get('data');
+
+            if (dataParam) {
+                try {
+                    // Decode the base64 encoded JSON string
+                    const decodedStr = atob(dataParam);
+                    const bookingData = JSON.parse(decodedStr);
+
+                    document.getElementById('display-name').textContent = bookingData.name || 'Valued Guest';
+
+                    // Format Date nicely
+                    const dateObj = new Date(bookingData.date);
+                    const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+                    document.getElementById('display-date').textContent = dateObj.toLocaleDateString('en-US', dateOptions) || 'N/A';
+
+                    // Format Time (convert 24h to 12h)
+                    let displayTime = bookingData.time;
+                    if (bookingData.time) {
+                        const [hours, minutes] = bookingData.time.split(':');
+                        const h = parseInt(hours, 10);
+                        const ampm = h >= 12 ? 'PM' : 'AM';
+                        const h12 = h % 12 || 12;
+                        displayTime = `${h12}:${minutes} ${ampm}`;
+                    }
+                    document.getElementById('display-time').textContent = displayTime || 'N/A';
+
+                    document.getElementById('display-party').textContent = `${bookingData.party} Guests`;
+
+                    document.getElementById('ticket-card').style.display = 'block';
+                } catch (e) {
+                    console.error('Error parsing booking data:', e);
+                    document.getElementById('error-msg').style.display = 'block';
+                }
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>
