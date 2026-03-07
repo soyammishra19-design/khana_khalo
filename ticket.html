@@ -181,6 +181,10 @@
 
         <div class="detail-group">
             <div class="detail-item">
+                <span class="detail-label">Location</span>
+                <span class="detail-value" id="display-area" style="color:var(--gold)">Main Dining</span>
+            </div>
+            <div class="detail-item">
                 <span class="detail-label">Date</span>
                 <span class="detail-value" id="display-date">--</span>
             </div>
@@ -192,6 +196,19 @@
                 <span class="detail-label">Party Size</span>
                 <span class="detail-value" id="display-party">-- Guests</span>
             </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+            <button
+                style="background:#000; color:#fff; border:1px solid #333; padding:10px 15px; border-radius:8px; cursor:pointer; font-family:var(--font-body); display:flex; align-items:center; gap:8px;"
+                onclick="alert('Downloading standard .pkpass file for Apple Wallet integration...')">
+                 Add to Apple Wallet
+            </button>
+            <button
+                style="background:#fff; color:#000; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; font-family:var(--font-body); font-weight:bold; display:flex; align-items:center; gap:8px;"
+                onclick="alert('Saving to Google Wallet integration...')">
+                G Add to Google Wallet
+            </button>
         </div>
 
         <p class="footer-note">Please present this digital ticket to the host upon arrival.</p>
@@ -231,7 +248,11 @@
                     }
                     document.getElementById('display-time').textContent = displayTime || 'N/A';
 
-                    document.getElementById('display-party').textContent = `${bookingData.party} Guests`;
+                    // Use bookingData.partySize per form submission variable name
+                    document.getElementById('display-party').textContent = `${bookingData.partySize || bookingData.party || '--'} Guests`;
+                    if (bookingData.area) {
+                        document.getElementById('display-area').textContent = bookingData.area;
+                    }
 
                     document.getElementById('ticket-card').style.display = 'block';
                 } catch (e) {
