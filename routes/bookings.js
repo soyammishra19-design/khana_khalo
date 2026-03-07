@@ -34,6 +34,74 @@ router.post('/', async (req, res) => {
     const booking = new Booking(req.body);
     try {
         const newBooking = await booking.save();
+
+        const htmlContent = `
+                            <div style="font-family: sans-serif; text-align: center;">
+                                <h2>Your Table is Reserved!</h2>
+                                <p>Hi ${newBooking.name}, thank you for booking with Éclat Bistro.</p>
+                                <hr />
+                                <p><strong>Date:</strong> ${new Date(newBooking.date).toLocaleDateString()}</p>
+                                <p><strong>Time:</strong> ${newBooking.time}</p>
+                                <p><strong>Guests:</strong> ${newBooking.partySize}</p>
+                                <hr />
+                                <p>We look forward to serving you!</p>
+                            </div>
+                        `;
+
+        if (process.env.RESEND_API_KEY) {
+            try {
+                const response = await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        from: 'Reservations <onboarding@resend.dev>', // Update with your verified sender later
+                        to: [newBooking.email],
+                        subject: 'Your Booking Confirmation - Éclat Bistro',
+                        html: htmlContent
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to send email API response:', await response.text());
+                } else {
+                    console.log('Confirmation email sent to', newBooking.email);
+                }
+            } catch (apiError) {
+                console.error('Error reaching email API:', apiError);
+            }
+        } else {
+            console.log('No RESEND_API_KEY found in .env. Using Nodemailer Ethereal for testing...');
+            try {
+                const nodemailer = require('nodemailer');
+                let testAccount = await nodemailer.createTestAccount();
+                let transporter = nodemailer.createTransport({
+                    host: "smtp.ethereal.email",
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: testAccount.user,
+                        pass: testAccount.pass
+                    }
+                });
+
+                let info = await transporter.sendMail({
+                    from: '"Éclat Bistro" <reservations@eclatbistro.com>',
+                    to: newBooking.email,
+                    subject: "Your Booking Confirmation - Éclat Bistro",
+                    html: htmlContent
+                });
+
+                console.log("Confirmation email sent to", newBooking.email);
+                console.log("Preview your email here: %s", nodemailer.getTestMessageUrl(info));
+                console.log("^ Click the link above to view your email test delivery ^");
+            } catch (err) {
+                console.error("Nodemailer error:", err);
+            }
+        }
+
         res.status(201).json(newBooking);
     } catch (err) {
         res.status(400).json({ message: err.message });

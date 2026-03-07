@@ -1,0 +1,77 @@
+# Éclat Bistro Website Full Architecture & Feature Report
+
+This report serves as a comprehensive breakdown of the **Éclat Bistro | Franco-Indian Symphony** web application. It covers everything from technical architecture and user interface details to interactive elements and backend API infrastructure.
+
+---
+
+## 1. Technical Stack & Architecture
+* **Frontend:** Vanilla HTML5, CSS3, and JavaScript (No heavyweight frameworks). Designed as a highly optimized Single Page Application (SPA).
+* **Styling Methodology:** Native CSS variables (`:root`), Flexbox, and CSS Grid for a fully responsive, mobile-first design system.
+* **Backend Integration:** Communicates with a Node.js/Express server connecting to a MongoDB cluster for tracking reservations and orders. Contains offline-mocking capabilities to gracefully degrade if the backend is unavailable.
+* **Progressive Web App (PWA) Ready:** Includes a [manifest.json](file:///c:/Users/soyam/Documents/Restaurant/manifest.json) and [sw.js](file:///c:/Users/soyam/Documents/Restaurant/sw.js) (Service Worker) preparation.
+
+---
+
+## 2. UI / UX Design System
+
+**Aesthetic Theme: "Timeless Luxury & Odisha Heritage"**
+The interface aims for Michelin-star-level luxury combining Parisian bistro aesthetics with an Indian heritage touch. 
+
+### Color Palette
+* **Deep Charcoal (`#2a1b18`)**: Warm espresso base mimicking dim, ambient lighting.
+* **Bright Peach Accent / Gold (`#e6b28a`)**: Primary highlight color for luxurious call-to-actions and borders.
+* **Nude Peach White (`#ecd3c6`)**: Soft, muted body text for high legibility on dark themes.
+
+### Typography
+* **Primary Headings (`Playfair Display`):** Elegant serif font evoking French haute cuisine.
+* **Body Text (`Montserrat`):** Clean, geometric sans-serif for high readability in dense data sections.
+
+### Micro-Interactions & Animations
+* **`custom door-splash` Entry:** A bespoke welcome screen displaying a spinning Konark wheel SVG and glowing Odia text ("ସ୍ଵାଗତମ୍"). It physically parts down the center via CSS transforms alongside a blurring fade-out when the user clicks "Begin the Journey".
+* **Scroll-Triggered Intersections:** Relies on an `IntersectionObserver` to systematically fade and float content (`.hidden` class) vertically up into position as the user scrolls down the page.
+* **Granular Particle System:** A lightweight HTML5 `<canvas>` rendering 50 dynamic gold particles floating silently across the Hero section.
+
+---
+
+## 3. Client Features Overview
+
+### A. Dynamic Interactive Menu
+* **Categorization Tabs:** Filters the dishes seamlessly across *Swagata* (Drinks), *Arambha* (Appetizers), *Niramisa* (Veg), *Aamisa* (Non-Veg), *Sashya* (Rice/Breads), and *Mitha* (Desserts).
+* **Live Client-Side Search:** A real-time search bar that scans dish titles and descriptions on the fly, hiding unmatched items and revealing a graceful error message if the search brings up zero results.
+* **Nutritional Dietary UI:** Hoverable CSS tooltips (`<svg>` icons) showing tags like "Vegetarian", paired with `Kcal` counters next to dish pricing.
+
+### B. Table Reservation System & E-Ticket QR
+* **Form Logic:** A strictly typed form utilizing native HTML5 bounds (e.g., minimum date is forced dynamically via JavaScript to today's date). Offers party size sliders and predefined peak-hour slot selection.
+* **Automated Processing:**
+  - POSTs data seamlessly to the Express API.
+  - Generates a bespoke **Base64 JSON string** carrying the customer's credentials securely in the client state.
+* **Digital Ticketing Engine ([ticket.html](file:///c:/Users/soyam/Documents/Restaurant/ticket.html)):** The reservation dynamically compiles a bespoke QR code pointing to a specialized renderer. Scanning the QR code (or interacting with the URL data blob) loads a stylized E-Ticket stub detailing the customer's name, localized standard time (converting 24h internal data to 12h AM/PM layout), and total party size. 
+
+### C. Voice Command Navigation
+* **`SpeechRecognition` Engine:** Incorporates browser-native Web Speech API.
+* **Intelligent Routing:** Upon clicking the mic tool in the navbar, a client can speak commands like *"Reserve"*, *"Book Table"*, *"Menu"*, or *"Login"*. The JS pipeline processes the speech transcript and seamlessly scrolls the client to the relevant section or opens specific secure modal overlays.
+
+### D. Multi-Language i18n
+* **Token Switching:** Users can toggle between `EN` (English) and `HI` (Hindi) via a dedicated top-right navbar control. A JavaScript dictionary scans all DOM elements labeled with `data-lang` flags and natively injects the new localized strings in real-time.
+
+### E. Authenticated Modals (Overlays)
+* **Gallery Lightbox:** Implements a CSS-only image scaler popping out thumbnail assets into a fullscreen isolated view.
+* **Authentication Portal (Local Storage):** A fully functioning JWT-capable login and registration modular overlay, falling back to mock LocalStorage generation if the backend is down.
+* **Loyalty Program Engine (Camera API):** Capable of launching the mobile device's back camera (`navigator.mediaDevices.getUserMedia`) to scan table QR bills for point accrual.
+* **Online Storefront:** Simulated e-commerce cart generating Mock Razorpay payments overlays.
+
+---
+
+## 4. Backend / Admin Integration
+
+### Admin Live Dashboard System
+* Features a "Staff Access" modal requesting a passcode (`staff2026`).
+* When authorized, it unveils a live metrics dashboard projecting today's running revenue (₹42,500), active table reservations, and live tracking of the restaurant's highest "trending" dish (e.g., Scallops).
+
+### Automated NodeMailer Fail-safes (Bookings.js)
+* **Production Logic:** Capable of triggering the remote **Resend Dev API** to automatically disburse booking confirmation HTML emails over the network whenever `RESEND_API_KEY` is validated in the `.env` file.
+* **Offline Testing Logic:** Incorporates a custom-built, auto-generating **Ethereal / Nodemailer** fallback. When tested locally without an API key, the Node.js backend organically creates a disposable test inbox, compiles the exact HTML email markup, and spits out a direct secure access URL into the Node console so developers can instantly verify the email architecture.
+
+---
+## Summary
+Overall, **Éclat Bistro** is constructed as a highly optimized, single-page PWA showcasing enterprise-grade aesthetic micro-transactions. It marries offline-safe functionality (Mock Auth, Voice Browsing, Dynamic QR linking) with true backend infrastructure processing to deliver an immersive end-user experience.

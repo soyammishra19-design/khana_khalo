@@ -20,13 +20,19 @@
 
     <style>
         :root {
-            --charcoal: #1a1a1a;
-            --gold: #D4AF37;
-            --gold-hover: #b5952f;
-            --white: #F8F1E9;
+            --charcoal: #2a1b18;
+            /* Deep warm espresso */
+            --gold: #e6b28a;
+            /* Bright peach accent */
+            --gold-hover: #c08769;
+            /* Terracotta hover */
+            --white: #ecd3c6;
+            /* Nude peach white */
             --green: #2D5016;
-            --text-dark: #333333;
-            --text-light: #F8F1E9;
+            /* Keep green for dietary */
+            --text-dark: #b36050;
+            /* Rust red text */
+            --text-light: #ecd3c6;
             --font-heading: 'Playfair Display', serif;
             --font-body: 'Montserrat', sans-serif;
             --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -624,7 +630,7 @@
         /* Book Table */
         #book {
             padding: 100px 5%;
-            background: #111;
+            background: var(--charcoal);
         }
 
         .booking-container {
@@ -831,7 +837,7 @@
             flex: 1;
             min-width: 300px;
             height: 300px;
-            background: #222;
+            background: var(--charcoal);
         }
 
         .amenities {
@@ -1438,7 +1444,7 @@
         }
 
         .dash-card {
-            background: #111;
+            background: rgba(0, 0, 0, 0.2);
             padding: 20px;
             text-align: center;
             border-bottom: 2px solid var(--gold);
@@ -1609,119 +1615,169 @@
     <!-- Menu Section -->
     <section id="menu">
         <h2 class="section-title hidden">Culinary Masterpieces</h2>
+        <div class="search-container hidden delay-1" style="text-align: center; margin-bottom: 30px;">
+            <input type="text" id="menu-search" placeholder="Search our signature dishes..."
+                style="width: 100%; max-width: 400px; padding: 12px 20px; font-size: 1rem; border: 1px solid var(--gold); border-radius: 25px; background: transparent; color: var(--white); outline: none; transition: box-shadow 0.3s;"
+                onfocus="this.style.boxShadow='0 0 10px var(--gold)'" onblur="this.style.boxShadow='none'">
+            <div id="no-results-msg" style="display:none; color: #ff4d4d; margin-top: 15px; font-style: italic;">We're
+                sorry, that dish is currently unavailable.</div>
+        </div>
         <div class="menu-tabs hidden delay-1">
-            <button class="tab-btn active" data-target="appetizers">Appetizers</button>
-            <button class="tab-btn" data-target="mains">Mains</button>
-            <button class="tab-btn" data-target="desserts">Desserts</button>
-            <button class="tab-btn" data-target="vegan">Vegan/GF</button>
+            <button class="tab-btn active" data-target="swagata">Swagata</button>
+            <button class="tab-btn" data-target="arambha">Arambha</button>
+            <button class="tab-btn" data-target="niramisa">Niramisa (Veg)</button>
+            <button class="tab-btn" data-target="aamisa">Aamisa (Non-Veg)</button>
+            <button class="tab-btn" data-target="sashya">Sashya</button>
+            <button class="tab-btn" data-target="mitha">Mitha (Desserts)</button>
         </div>
 
         <div class="menu-container">
-            <!-- Appetizers -->
-            <div class="menu-grid active" id="appetizers">
+            <!-- Swagata (Drinks) -->
+            <div class="menu-grid active" id="swagata">
                 <div class="dish-card">
-                    <img src="./scallops.png" alt="Scallops" class="dish-img" loading="lazy">
-                    <div class="dish-info">
-                        <div class="dish-header">
-                            <h3 class="dish-title">Seared Scallops</h3>
-                            <span class="dish-price">₹1200</span>
-                        </div>
-                        <p class="dish-desc">Hokkaido scallops, coconut moilee reduction, curry leaf oil, puffed quinoa.
-                        </p>
-                        <div class="dietary">
-                            <svg class="diet-icon" data-tooltip="Gluten Free" viewBox="0 0 24 24">
-                                <path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13.5h-13L12 6.5z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="dish-card">
-                    <img src="./foie_gras.png" alt="Foie Gras" class="dish-img" loading="lazy">
-                    <div class="dish-info">
-                        <div class="dish-header">
-                            <h3 class="dish-title">Tandoori Foie Gras</h3>
-                            <span class="dish-price">₹1850</span>
-                        </div>
-                        <p class="dish-desc">Silky foie gras kissed by tandoor smoke, served with mango-cardamom chutney
-                            and homemade brioche.</p>
-                    </div>
-                </div>
-                <div class="dish-card">
-                    <img src="./beetroot.png" alt="Tartare" class="dish-img" loading="lazy">
-                    <div class="dish-info">
-                        <div class="dish-header">
-                            <h3 class="dish-title">Beetroot Tartare</h3>
-                            <span class="dish-price">₹850</span>
-                        </div>
-                        <p class="dish-desc">Roasted beets, mustard aioli, smoked local cheese, crispy capers.</p>
-                        <div class="dietary">
-                            <svg class="diet-icon" data-tooltip="Vegetarian" viewBox="0 0 24 24">
-                                <path
-                                    d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zM7 11v2h10v-2H7z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mains -->
-            <div class="menu-grid" id="mains">
-                <div class="dish-card">
-                    <img src="./pakhala.png" alt="Pakhala" class="dish-img" loading="lazy">
-                    <div class="dish-info">
-                        <div class="dish-header">
-                            <h3 class="dish-title">Pakhala - Odisha Special</h3>
-                            <span class="dish-price">₹600</span>
-                        </div>
-                        <p class="dish-desc">Fermented water-rice served with prime fried fish, crispy badi chura, and
-                            roasted vegetables in an elegant brass bowl.</p>
-                    </div>
-                </div>
-                <!-- Additional items can be added -->
-                <div class="dish-card">
-                    <img src="./cannelloni.png" alt="Lamb" class="dish-img" loading="lazy">
-                    <div class="dish-info">
-                        <div class="dish-header">
-                            <h3 class="dish-title">Rogan Josh Canneloni</h3>
-                            <span class="dish-price">₹1950</span>
-                        </div>
-                        <p class="dish-desc">Pulled lamb, saffron pasta sheet, fennel foam, truffle essence.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-grid" id="desserts">
-                <!-- Desserts items -->
-                <div class="dish-card">
-                    <img src="./dessert.png" alt="Dessert" class="dish-img" loading="lazy">
-                    <div class="dish-info">
-                        <div class="dish-header">
-                            <h3 class="dish-title">Gajar Halwa Mille-Feuille</h3>
-                            <span class="dish-price">₹650</span>
-                        </div>
-                        <p class="dish-desc">Carrot fudge, crispy phyllo, pistachio dust, cardamom chantilly.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-grid" id="vegan">
-                <!-- Vegan items -->
-                <div class="dish-card">
-                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800" alt="Vegan Salad"
+                    <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800" alt="Lembu Mishri"
                         class="dish-img" loading="lazy">
                     <div class="dish-info">
                         <div class="dish-header">
-                            <h3 class="dish-title">Jackfruit Bourguignon</h3>
-                            <span class="dish-price">₹1100</span>
+                            <h3 class="dish-title">Lembu Mishri Sharbat</h3><span class="dish-price">227 Kcal</span>
                         </div>
-                        <p class="dish-desc">Braised tender jackfruit, pearl onions, mushroom reduction, potato silk.
-                        </p>
-                        <div class="dietary">
-                            <svg class="diet-icon" data-tooltip="Vegan" viewBox="0 0 24 24">
+                        <p class="dish-desc">ଲେମ୍ବୁ ମିଶ୍ରି ସର୍ବତ - Fennel Scented, Palm Sugar and Lemon Cooler.</p>
+                        <div class="dietary"><svg class="diet-icon" data-tooltip="Vegetarian" viewBox="0 0 24 24">
                                 <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.5 16.5L4 11l1.41-1.41L9.5 13.67l9.09-9.09L20 6l-10.5 10.5z" />
-                            </svg>
+                                    d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zM7 11v2h10v-2H7z" />
+                            </svg></div>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800" alt="Dahi Pudina"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Dahi Pudina Sharbat</h3><span class="dish-price">151 Kcal</span>
                         </div>
+                        <p class="dish-desc">ଦହି ପୁଦିନା ସର୍ବତ - Buttermilk Aperitif with Fresh Mint and Roasted Cumin.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arambha (Appetizers) -->
+            <div class="menu-grid" id="arambha">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=800" alt="Torani Kanji"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Torani Kanji</h3><span class="dish-price">261 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ତୋରାଣି କାଞ୍ଜି - Natural Probiotic Soup of Rice Water with Aromatic Bouquet
+                            of Herbs.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800" alt="Posto Nadia Bara"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Posto Nadia Bara</h3><span class="dish-price">890 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ପୋସ୍ତ ନଡ଼ିଆ ବରା - Poppy Seed Cutlet with Fresh Coconut Bits.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Niramisa (Veg Mains) -->
+            <div class="menu-grid" id="niramisa">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=800" alt="Dalma"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Dalma - Signature</h3><span class="dish-price">1134 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଡାଲମା - Authentic Odia lentils cooked with seasonal garden vegetables.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800" alt="Ghanta Tarkari"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Ghanta Tarkari</h3><span class="dish-price">872 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଘାଣ୍ଟ ତରକାରି - A medley of 21+ seasonal vegetables and legumes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aamisa (Non-Veg Mains) -->
+            <div class="menu-grid" id="aamisa">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1516714435131-44d6b64dc3a2?w=800"
+                        alt="Mati Handi Mangsa" class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Mati Handi Mangsa</h3><span class="dish-price">1052 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ମାଟି ହାଣ୍ଡି ମାଂସ - Earthen pot mutton curry cooked over wood charcoal.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800" alt="Chingudi Jhola"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Chilika Chingudi Jhola</h3><span class="dish-price">671 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଚିଙ୍ଗୁଡ଼ି ଝୋଳ - Fresh Chilika prawns cooked in traditional onion-tomato
+                            gravy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sashya (Rice & Breads) -->
+            <div class="menu-grid" id="sashya">
+                <div class="dish-card">
+                    <img src="./pakhala.png" alt="Kanika" class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Kanika</h3><span class="dish-price">777 Kcal</span>
+                        </div>
+                        <p class="dish-desc">କାନିକା - Spiced aromatic sweet yellow rice with cashew and raisins.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800" alt="Chakuli"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Chakuli</h3><span class="dish-price">428 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଚକୁଳି - Traditional flatbread made with fermented rice-lentil batter.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mitha (Desserts) -->
+            <div class="menu-grid" id="mitha">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800" alt="Manda Pitha"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Manda Pitha</h3><span class="dish-price">194 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ମଣ୍ଡା ପିଠା - Steamed rice dumplings stuffed with coconut and jaggery.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+                        alt="Kheera Poda Pitha" class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Kheera Poda Pitha</h3><span class="dish-price">425 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଖିର ପୋଡ଼ ପିଠା - Signature baked rice and milk cake from Berhampur.</p>
                     </div>
                 </div>
             </div>
@@ -2156,7 +2212,33 @@
                 grids.forEach(g => g.classList.remove('active'));
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.target).classList.add('active');
+
+                // Clear search when changing tabs
+                document.getElementById('menu-search').value = '';
+                document.querySelectorAll('.dish-card').forEach(dish => dish.style.display = 'block');
+                document.getElementById('no-results-msg').style.display = 'none';
             });
+        });
+
+        // Menu Search Logic
+        document.getElementById('menu-search').addEventListener('input', function (e) {
+            const term = e.target.value.toLowerCase();
+            const activeGrid = document.querySelector('.menu-grid.active');
+            const dishesInActiveGrid = activeGrid.querySelectorAll('.dish-card');
+            let found = false;
+
+            dishesInActiveGrid.forEach(dish => {
+                const title = dish.querySelector('.dish-title').innerText.toLowerCase();
+                const desc = dish.querySelector('.dish-desc') ? dish.querySelector('.dish-desc').innerText.toLowerCase() : '';
+                if (title.includes(term) || desc.includes(term)) {
+                    dish.style.display = 'block';
+                    found = true;
+                } else {
+                    dish.style.display = 'none';
+                }
+            });
+
+            document.getElementById('no-results-msg').style.display = found ? 'none' : 'block';
         });
 
         // Gallery Filters
@@ -2203,26 +2285,41 @@
         }, 5000);
 
         // Booking Form Submission
-        document.getElementById('booking-form').addEventListener('submit', (e) => {
+        document.getElementById('booking-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = e.target;
             const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
             const party = document.getElementById('party').value;
             const date = document.getElementById('date').value;
             const time = document.getElementById('time').value;
+            const requests = document.getElementById('requests').value;
 
             document.getElementById('res-details').innerText = `${party} Guests on ${date} at ${time}`;
 
-            const bookingData = { name, date, time, party };
+            const bookingData = { name, phone, email, partySize: parseInt(party), date, time, requests };
             const base64Data = btoa(JSON.stringify(bookingData));
 
-            // Get the host (handles IP addresses for mobile testing, e.g., 192.168.x.x:5000) // Force IP if localhost
-            let host = window.location.host;
-            if (host.includes('localhost') || host.includes('127.0.0.1')) {
-                host = '10.147.225.128:5000'; // Your actual local Wi-Fi IP address
+            try {
+                // Send booking to the backend to trigger email & DB storage
+                const response = await fetch('http://localhost:5000/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                if (!response.ok) {
+                    console.error('Server error creating booking');
+                }
+            } catch (err) {
+                console.error('Could not reach backend API for booking:', err);
             }
-            const protocol = 'http:'; // Force HTTP for local network IP
-            const devUrl = `${protocol}//${host}/ticket.html?data=${encodeURIComponent(base64Data)}`;
+
+            // Use current origin to ensure the QR code works locally or wherever hosted
+            const devUrl = `${window.location.origin}/ticket.html?data=${encodeURIComponent(base64Data)}`;
 
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(devUrl)}`;
             document.getElementById('qr-container').innerHTML = `<a href="${devUrl}" target="_blank" title="Click to preview the ticket!"><img src="${qrUrl}" alt="Booking QR Code" style="border: 2px solid var(--gold); border-radius: 8px; padding: 5px; background: white; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /></a>`;
@@ -2230,7 +2327,7 @@
             document.getElementById('success-modal').style.display = 'flex';
 
             // Save to localStorage as requested
-            localStorage.setItem('eclat_booking', JSON.stringify(bookingData));
+            localStorage.setItem('eclat_booking', JSON.stringify({ name, date, time, party }));
 
             form.reset();
         });
