@@ -42,6 +42,15 @@ app.get('/api/device-ip', (req, res) => {
     res.json({ ip: bestIp || 'localhost' });
 });
 
+const fs = require('fs');
+app.get('/api/debug-files', (req, res) => {
+    res.json({
+        dirname: __dirname,
+        cwd: process.cwd(),
+        files: fs.readdirSync(__dirname)
+    });
+});
+
 const PORT = process.env.PORT || 5000;
 if (require.main === module) {
     app.listen(PORT, () => {
