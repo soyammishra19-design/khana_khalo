@@ -2390,7 +2390,7 @@
             let previewEmailBtnHtml = '';
             try {
                 // Send booking to the backend to trigger email & DB storage
-                const response = await fetch('http://localhost:5000/api/bookings', {
+                const response = await fetch('/api/bookings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -2416,7 +2416,7 @@
                 try {
                     const portMatch = currentOrigin.match(/:(\d+)/);
                     const port = portMatch ? portMatch[1] : '5000';
-                    const ipReq = await fetch('http://localhost:5000/api/device-ip');
+                    const ipReq = await fetch('/api/device-ip');
                     const ipData = await ipReq.json();
                     currentOrigin = `http://${ipData.ip}:${port}`;
                 } catch(e) {
@@ -2475,7 +2475,7 @@
 
             try {
                 // 1. Create order on backend
-                const response = await fetch('http://localhost:5000/api/orders/create-razorpay-order', {
+                const response = await fetch('/api/orders/create-razorpay-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ amount })
@@ -2492,7 +2492,7 @@
                     order_id: orderData.id,
                     handler: async function (response) {
                         try {
-                            const verifyRes = await fetch('http://localhost:5000/api/orders/verify', {
+                            const verifyRes = await fetch('/api/orders/verify', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
@@ -2674,7 +2674,7 @@
                 document.getElementById('staff-login-box').style.display = 'none';
                 document.getElementById('staff-dashboard').style.display = 'block';
                 // Trigger backend fetch for Live Dashboard
-                fetch('http://localhost:5000/api/orders/stats')
+                fetch('/api/orders/stats')
                     .then(res => res.json())
                     .then(data => console.log('Live data:', data))
                     .catch(e => console.log('Mock Dashboard data displayed instead. Backend offline.'));
@@ -2811,7 +2811,7 @@
             const body = isSignUpMode ? { name, email, password } : { email, password };
 
             try {
-                const res = await fetch(`http://localhost:5000${endpoint}`, {
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
