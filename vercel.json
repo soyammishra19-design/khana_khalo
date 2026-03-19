@@ -1,7 +1,18 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "*.html",
+        "*.png",
+        "*.json",
+        "models/**",
+        "routes/**",
+        "supabase.js"
+      ]
+    }
+  },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "api/index.js" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "api/index.js" }
   ]
 }

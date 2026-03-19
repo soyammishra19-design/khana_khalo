@@ -11,11 +11,18 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '.')));
+app.use(express.static(process.cwd())); // Use current working directory for static files
 
-// Root Route for Vercel Static Serving
+// Root & Health Check Routing
+app.get('/alive', (req, res) => res.send('Backend is alive!'));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'index.html'), (err) => {
+        if (err) {
+            console.error('Error sending index.html:', err);
+            res.status(404).send('Index file not found or other error.');
+        }
+    });
 });
 
 // Routes
