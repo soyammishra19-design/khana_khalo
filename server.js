@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
@@ -18,21 +17,30 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/auth', require('./routes/auth'));
 
-// Database connection
-const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/eclatbistro', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-    } catch (err) {
-        console.error(`Error: ${err.message}`);
-        process.exit(1);
+const os = require('os');
+app.get('/api/device-ip', (req, res) => {
+    const ifaces = os.networkInterfaces();
+    let possibleIps = [];
+    for (const name of Object.keys(ifaces)) {
+        for (const iface of ifaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                possibleIps.push({ name, ip: iface.address });
+            }
+        }
     }
-};
-
-connectDB();
+    // 1. Try to find a Wi-Fi adapter specifically
+    let bestIp = possibleIps.find(i => i.name.toLowerCase().includes('wi-fi') || i.name.toLowerCase().includes('wireless'))?.ip;
+    // 2. Fallback to standard 192.168.* home network space
+    if (!bestIp) {
+        bestIp = possibleIps.find(i => i.ip.startsWith('192.168.'))?.ip;
+    }
+    // 3. Fallback to any interface that isn't a WSL/Hyper-V virtual switch
+    if (!bestIp && possibleIps.length > 0) {
+        const filtered = possibleIps.filter(i => !i.name.toLowerCase().includes('vethernet') && !i.name.toLowerCase().includes('wsl'));
+        bestIp = filtered.length > 0 ? filtered[0].ip : possibleIps[0].ip;
+    }
+    res.json({ ip: bestIp || 'localhost' });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

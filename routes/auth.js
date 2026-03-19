@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { supabaseFetch } = require('../supabase');
 
 const router = express.Router();
 
@@ -9,15 +9,18 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
     try {
-        let user = await User.findOne({ email });
-        if (user) {
+        let users = await supabaseFetch(`users?email=eq.${encodeURIComponent(email)}&select=*`);
+        if (users && users.length > 0) {
             return res.status(400).json({ msg: 'User already exists' });
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        user = new User({ name, email, password: hashedPassword });
-        await user.save();
+        const newUserReq = await supabaseFetch('users', {
+            method: 'POST',
+            body: JSON.stringify({ name, email, password: hashedPassword })
+        });
+        const user = newUserReq[0];
 
         const payload = { user: { id: user.id } };
         jwt.sign(payload, process.env.JWT_SECRET || 'secret123', { expiresIn: 3600 }, (err, token) => {
@@ -34,10 +37,11 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        let user = await User.findOne({ email });
-        if (!user) {
+        let users = await supabaseFetch(`users?email=eq.${encodeURIComponent(email)}&select=*`);
+        if (!users || users.length === 0) {
             return res.status(400).json({ msg: 'Invalid Credentials' });
         }
+        let user = users[0];
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {

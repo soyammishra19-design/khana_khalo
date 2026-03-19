@@ -2072,19 +2072,19 @@
                 <input type="text" id="order-address" placeholder="Start typing address...">
             </div>
             <button class="btn-gold" style="width:100%; margin-top:20px;"
-                onclick="alert('Mock Razorpay integrated flow triggered!')">Pay via Razorpay</button>
+                onclick="processRazorpayPayment()">Pay via Razorpay</button>
         </div>
     </div>
 
     <!-- Loyalty Modal -->
     <div class="full-overlay" id="loyalty-overlay">
-        <div class="overlay-box" style="text-align: center;">
-            <span class="overlay-close" onclick="closeOverlay('loyalty-overlay')">&times;</span>
+        <div class="overlay-box" style="text-align: center; max-width: 480px;">
+            <span class="overlay-close" onclick="stopLoyaltyScanner(); closeOverlay('loyalty-overlay')">×</span>
             <h2 class="section-title" style="font-size: 2rem;">Éclat Prestige</h2>
-            <p style="margin-bottom:20px; color:#aaa;">Scan bill QR to earn points or present to redeem.</p>
-            <div id="qr-reader">
-                <p>Camera feed starting...</p>
-            </div>
+            <p style="margin-bottom:20px; color:#aaa;">Scan a bill QR code to earn points, or present your card to redeem.</p>
+            <!-- html5-qrcode renders into this div -->
+            <div id="qr-reader" style="width:100%; border-radius:8px; overflow:hidden;"></div>
+            <div id="qr-reader-result" style="margin-top:12px; min-height:24px; font-size:0.9rem; color:var(--gold);"></div>
             <h3 style="margin-top:20px; color:var(--gold);">Your Balance: 4,500 pts</h3>
             <button class="btn-outline" style="margin-top:20px;">Redeem 1000 pts (₹500 off)</button>
         </div>
@@ -2207,6 +2207,12 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- Razorpay Checkout -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- html5-qrcode for Loyalty Scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- qrcode.js for PERMANENT local QR code generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- GSAP for Smooth Scub Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -2381,6 +2387,7 @@
             const bookingData = { name, phone, email, partySize: parseInt(party), date, time, requests, area };
             const base64Data = btoa(JSON.stringify(bookingData));
 
+            let previewEmailBtnHtml = '';
             try {
                 // Send booking to the backend to trigger email & DB storage
                 const response = await fetch('http://localhost:5000/api/bookings', {
@@ -2393,18 +2400,60 @@
 
                 if (!response.ok) {
                     console.error('Server error creating booking');
+                } else {
+                    const data = await response.json();
+                    if (data.previewUrl) {
+                        previewEmailBtnHtml = `<div style="margin-top:20px;"><a href="${data.previewUrl}" target="_blank" class="btn-gold" style="display:inline-block; text-decoration:none;">Open Test Email Notification</a></div>`;
+                    }
                 }
             } catch (err) {
                 console.error('Could not reach backend API for booking:', err);
             }
 
-            // Use current origin to ensure the QR code works locally or wherever hosted
-            const devUrl = `${window.location.origin}/ticket.html?data=${encodeURIComponent(base64Data)}`;
+            // Fetch actual external IP of machine dynamically so mobile scanning isn't broken
+            let currentOrigin = window.location.origin;
+            if (currentOrigin === 'null' || currentOrigin.startsWith('file://') || currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1')) {
+                try {
+                    const portMatch = currentOrigin.match(/:(\d+)/);
+                    const port = portMatch ? portMatch[1] : '5000';
+                    const ipReq = await fetch('http://localhost:5000/api/device-ip');
+                    const ipData = await ipReq.json();
+                    currentOrigin = `http://${ipData.ip}:${port}`;
+                } catch(e) {
+                    currentOrigin = 'http://192.168.1.100:5000'; // fallback LAN IP
+                }
+            }
+            const devUrl = `${currentOrigin}/ticket.html?data=${encodeURIComponent(base64Data)}`;
+            const qrSize = 160;
 
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(devUrl)}`;
-            document.getElementById('qr-container').innerHTML = `<a href="${devUrl}" target="_blank" title="Click to preview the ticket!"><img src="${qrUrl}" alt="Booking QR Code" style="border: 2px solid var(--gold); border-radius: 8px; padding: 5px; background: white; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /></a>`;
+            // Generate locally via QRCode.js for a permanent fix unreliant on an API
+            const qrContainer = document.getElementById('qr-container');
+            qrContainer.innerHTML = `
+                <div style="text-align:center;">
+                    <div id="qr-img-div" style="display:inline-block; border:2px solid var(--gold); border-radius:8px; padding:5px; background:white; cursor:pointer; transition:transform 0.2s;"
+                        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"></div>
+                    <p style="font-size:0.75rem;color:#aaa;margin-top:8px;">Scan with your phone camera</p>
+                    <a href="${devUrl}" target="_blank"
+                        style="display:inline-block;margin-top:10px;padding:8px 20px;background:var(--gold);color:#1a1a1a;font-weight:600;font-size:0.85rem;border-radius:20px;text-decoration:none;transition:opacity 0.2s;"
+                        onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                        🎟️ View Digital Ticket
+                    </a>
+                    ${previewEmailBtnHtml}
+                </div>`;
 
             document.getElementById('success-modal').style.display = 'flex';
+
+            // Empty it just in case, then generate
+            const qrElement = document.getElementById("qr-img-div");
+            qrElement.innerHTML = '';
+            new QRCode(qrElement, {
+                text: devUrl,
+                width: qrSize,
+                height: qrSize,
+                colorDark : "#1a1a1a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
 
             // Save to localStorage as requested
             localStorage.setItem('eclat_booking', JSON.stringify({ name, date, time, party }));
@@ -2414,6 +2463,85 @@
 
         function closeModal() {
             document.getElementById('success-modal').style.display = 'none';
+        }
+
+        async function processRazorpayPayment() {
+            const amount = 6000; // Hardcoded from UI for now (6000 total)
+            const address = document.getElementById('order-address').value;
+            if (!address) {
+                alert("Please enter a delivery address");
+                return;
+            }
+
+            try {
+                // 1. Create order on backend
+                const response = await fetch('http://localhost:5000/api/orders/create-razorpay-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+                const orderData = await response.json();
+
+                // 2. Initialize Razorpay
+                const options = {
+                    key: 'rzp_test_YourTestKeyId', // Use env or test key
+                    amount: orderData.amount,
+                    currency: orderData.currency,
+                    name: 'Éclat Bistro',
+                    description: 'Online Order Payment',
+                    order_id: orderData.id,
+                    handler: async function (response) {
+                        try {
+                            const verifyRes = await fetch('http://localhost:5000/api/orders/verify', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    orderData: {
+                                        customerName: "Guest User",
+                                        address: address,
+                                        items: [
+                                            { name: "Duck Confit Chettinad", price: 2100, quantity: 1 },
+                                            { name: "Rogan Josh Canneloni", price: 1950, quantity: 2 }
+                                        ],
+                                        totalAmount: amount,
+                                        status: 'preparing'
+                                    }
+                                })
+                            });
+                            
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok) {
+                                alert("Order Placed Successfully!");
+                                // Close modal if implemented as closeOverlay
+                                const overlay = document.getElementById('order-overlay');
+                                if(overlay) overlay.style.display = 'none';
+                            } else {
+                                alert("Payment verification failed: " + verifyData.message);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Error verifying payment");
+                        }
+                    },
+                    prefill: {
+                        name: 'Guest User',
+                        email: 'guest@example.com',
+                        contact: '9999999999'
+                    },
+                    theme: {
+                        color: '#D4AF37'
+                    }
+                };
+
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            } catch (err) {
+                console.error(err);
+                alert("Error initializing payment");
+            }
         }
 
         // Simple Particles representation using canvas (lightweight)
@@ -2494,17 +2622,44 @@
 
         document.getElementById('order-btn').addEventListener('click', () => document.getElementById('order-overlay').classList.add('active'));
 
-        document.getElementById('loyalty-btn').addEventListener('click', async () => {
-            document.getElementById('loyalty-overlay').classList.add('active');
-            let qrTxt = document.querySelector('#qr-reader p');
-            try {
-                // Request camera permission
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                qrTxt.innerText = "Camera Active... Scanning for Éclat QR Codes...";
-                // In production, instantiate html5-qrcode here mapped to a <video> element
-            } catch (err) {
-                qrTxt.innerText = "Camera access denied. Please manually enter bill ID below.";
+        let html5QrScanner = null;
+
+        function stopLoyaltyScanner() {
+            if (html5QrScanner) {
+                try {
+                    html5QrScanner.clear();
+                    html5QrScanner = null;
+                } catch (e) {}
             }
+        }
+
+        document.getElementById('loyalty-btn').addEventListener('click', () => {
+            document.getElementById('loyalty-overlay').classList.add('active');
+            const resultEl = document.getElementById('qr-reader-result');
+            resultEl.innerHTML = 'Initialising camera... Please select a camera from the menu.';
+
+            // Small delay to allow overlay to render before html5-qrcode attaches
+            setTimeout(() => {
+                if (html5QrScanner) stopLoyaltyScanner();
+
+                // PERMANENT FIX: Html5QrcodeScanner natively handles multiple cameras (including missing back-cameras on laptops) without crashing.
+                html5QrScanner = new Html5QrcodeScanner(
+                    "qr-reader",
+                    { fps: 10, qrbox: { width: 220, height: 220 } },
+                    /* verbose= */ false
+                );
+                
+                html5QrScanner.render((decodedText, decodedResult) => {
+                    stopLoyaltyScanner();
+                    resultEl.innerHTML = `✅ <strong>Scanned:</strong> ${decodedText}`;
+                    // Award points mock
+                    setTimeout(() => {
+                        resultEl.innerHTML = `🏆 <strong>+500 pts earned!</strong> Balance updated.`;
+                    }, 1500);
+                }, (errorMessage) => {
+                    // ignore continuous camera scan failure logs
+                });
+            }, 300);
         });
 
         document.getElementById('staff-btn').addEventListener('click', () => {

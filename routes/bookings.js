@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Booking = require('../models/Booking');
+const { supabaseFetch } = require('../supabase');
 
 // GET /api/bookings - Get all bookings
 router.get('/', async (req, res) => {
     try {
-        const bookings = await Booking.find().sort({ date: 1 });
+        const bookings = await supabaseFetch('bookings?select=*&order=date.asc');
         res.json(bookings);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -20,9 +20,7 @@ router.get('/today', async (req, res) => {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        const bookings = await Booking.find({
-            date: { $gte: today, $lt: tomorrow }
-        });
+        const bookings = await supabaseFetch(`bookings?select=*&date=gte.${today.toISOString()}&date=lt.${tomorrow.toISOString()}`);
         res.json(bookings);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -31,9 +29,12 @@ router.get('/today', async (req, res) => {
 
 // POST /api/bookings - Create new booking
 router.post('/', async (req, res) => {
-    const booking = new Booking(req.body);
     try {
-        const newBooking = await booking.save();
+        const newBookingReq = await supabaseFetch('bookings', {
+            method: 'POST',
+            body: JSON.stringify(req.body)
+        });
+        const newBooking = newBookingReq[0];
 
         const htmlContent = `
                             <div style="font-family: sans-serif; text-align: center;">
@@ -69,8 +70,10 @@ router.post('/', async (req, res) => {
                 } else {
                     console.log('Confirmation email sent to', newBooking.email);
                 }
+                res.status(201).json(newBooking);
             } catch (apiError) {
                 console.error('Error reaching email API:', apiError);
+                res.status(201).json(newBooking);
             }
         } else {
             console.log('No RESEND_API_KEY found in .env. Using Nodemailer Ethereal for testing...');
@@ -94,15 +97,18 @@ router.post('/', async (req, res) => {
                     html: htmlContent
                 });
 
+                const previewUrl = nodemailer.getTestMessageUrl(info);
                 console.log("Confirmation email sent to", newBooking.email);
-                console.log("Preview your email here: %s", nodemailer.getTestMessageUrl(info));
+                console.log("Preview your email here: %s", previewUrl);
                 console.log("^ Click the link above to view your email test delivery ^");
+                
+                // Return previewUrl to the frontend so it can be displayed
+                return res.status(201).json({ booking: newBooking, previewUrl });
             } catch (err) {
                 console.error("Nodemailer error:", err);
+                return res.status(201).json(newBooking);
             }
         }
-
-        res.status(201).json(newBooking);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -111,15 +117,17 @@ router.post('/', async (req, res) => {
 // PATCH /api/bookings/:id - Update booking status
 router.patch('/:id/status', async (req, res) => {
     try {
-        const booking = await Booking.findById(req.params.id);
-        if (booking == null) {
+        if (!req.body.status) {
+             return res.status(400).json({ message: 'Status is required' });
+        }
+        const updatedBookingReq = await supabaseFetch(`bookings?id=eq.${req.params.id}`, {
+             method: 'PATCH',
+             body: JSON.stringify({ status: req.body.status })
+        });
+        if (!updatedBookingReq || updatedBookingReq.length === 0) {
             return res.status(404).json({ message: 'Booking not found' });
         }
-        if (req.body.status != null) {
-            booking.status = req.body.status;
-        }
-        const updatedBooking = await booking.save();
-        res.json(updatedBooking);
+        res.json(updatedBookingReq[0]);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
