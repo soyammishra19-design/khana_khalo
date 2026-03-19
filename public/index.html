@@ -1,0 +1,2871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éclat Bistro | Franco-Indian Symphony</title>
+    <meta name="description" content="Premium fine dining restaurant in Bhubaneswar.">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for standard icons if needed, but we'll use SVGs as requested -->
+
+    <style>
+        :root {
+            --charcoal: #2a1b18;
+            /* Deep warm espresso */
+            --gold: #e6b28a;
+            /* Bright peach accent */
+            --gold-hover: #c08769;
+            /* Terracotta hover */
+            --white: #ecd3c6;
+            /* Nude peach white */
+            --green: #2D5016;
+            /* Keep green for dietary */
+            --text-dark: #b36050;
+            /* Rust red text */
+            --text-light: #ecd3c6;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--charcoal);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body.noscroll {
+            overflow: hidden;
+        }
+
+        /* Welcome Splash - Animated Heritage Edition */
+        #welcome-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* The Temple Doors */
+        .door-left,
+        .door-right {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1620786937667-1e5b128526eb?w=1920&q=80') center/cover no-repeat;
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 1;
+        }
+
+        .door-left {
+            left: 0;
+            border-right: 2px solid var(--gold);
+            background-position: left center;
+        }
+
+        .door-right {
+            right: 0;
+            border-left: 2px solid var(--gold);
+            background-position: right center;
+        }
+
+        .door-left::after,
+        .door-right::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 26, 0.92);
+        }
+
+        #welcome-splash.out {
+            pointer-events: none;
+        }
+
+        #welcome-splash.out .door-left {
+            transform: translateX(-100%);
+        }
+
+        #welcome-splash.out .door-right {
+            transform: translateX(100%);
+        }
+
+        #welcome-splash.out .splash-content {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .splash-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 20px;
+            pointer-events: auto;
+        }
+
+        .emblem-container {
+            margin-bottom: 20px;
+            animation: fadeInScale 1s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .konark-wheel {
+            width: 100px;
+            height: 100px;
+            color: var(--gold);
+            animation: spin 30s linear infinite;
+        }
+
+        .odia-welcome {
+            font-size: 5.5rem;
+            color: var(--gold);
+            font-family: var(--font-heading);
+            margin-bottom: 15px;
+            animation: blurIn 1.5s forwards ease-out;
+            font-weight: 500;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            letter-spacing: 5px;
+        }
+
+        .english-welcome {
+            font-size: 1.2rem;
+            color: var(--white);
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: slideUpFade 1s forwards 0.8s;
+        }
+
+        .splash-desc {
+            font-size: 1.1rem;
+            color: #ccc;
+            max-width: 500px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: slideUpFade 1s forwards 1.2s;
+            line-height: 1.8;
+            font-style: italic;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            padding-top: 20px;
+        }
+
+        .splash-enter {
+            margin-top: 40px;
+            opacity: 0;
+            animation: slideUpFade 1s forwards 1.6s;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes blurIn {
+            0% {
+                opacity: 0;
+                filter: blur(10px);
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2,
+        h3,
+        h4,
+        .brand {
+            font-family: var(--font-heading);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Particles Layer */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Typography */
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        /* Button Styles */
+        .btn-gold {
+            display: inline-block;
+            background: var(--gold);
+            color: #111;
+            padding: 15px 35px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid var(--gold);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .btn-gold:hover::before {
+            left: 0;
+        }
+
+        .btn-gold:hover {
+            box-shadow: 0 0 15px var(--gold);
+            color: #000;
+        }
+
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: var(--gold);
+            padding: 15px 35px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid var(--gold);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-outline:hover {
+            background: var(--gold);
+            color: #111;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        nav.scrolled {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 50px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+            color: var(--gold);
+            font-style: italic;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--gold);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        /* Hero */
+        #hero {
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(26, 26, 26, 0.5), rgba(26, 26, 26, 0.9));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            color: var(--white);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #ddd;
+            opacity: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        .wait-time {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+            opacity: 0;
+        }
+
+        .hero-play .hero-content h1 {
+            animation: fadeUp 1s forwards 0.5s;
+        }
+
+        .hero-play .hero-content p {
+            animation: fadeUp 1s forwards 0.8s;
+        }
+
+        .hero-play .hero-buttons {
+            animation: fadeUp 1s forwards 1.1s;
+        }
+
+        .hero-play .wait-time {
+            animation: fadeUp 1s forwards 1.4s;
+        }
+
+        /* Menu */
+        #menu {
+            padding: 100px 5%;
+            background: var(--charcoal);
+        }
+
+        .menu-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 1rem;
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            padding: 10px 0;
+            position: relative;
+            opacity: 0.6;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active,
+        .tab-btn:hover {
+            opacity: 1;
+            color: var(--gold);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gold);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .menu-grid.active {
+            display: grid;
+            opacity: 1;
+        }
+
+        .dish-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .dish-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .dish-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .dish-card:hover .dish-img {
+            transform: scale(1.05);
+        }
+
+        .dish-info {
+            padding: 25px;
+        }
+
+        .dish-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .dish-title {
+            font-size: 1.3rem;
+            color: var(--gold);
+        }
+
+        .dish-price {
+            font-weight: 600;
+        }
+
+        .dish-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .dietary {
+            display: flex;
+            gap: 10px;
+        }
+
+        .diet-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--green);
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Tooltip */
+        .diet-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: #000;
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .diet-icon:hover::after {
+            opacity: 1;
+            bottom: 120%;
+        }
+
+        /* Book Table */
+        #book {
+            padding: 100px 5%;
+            background: var(--charcoal);
+        }
+
+        .booking-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--charcoal);
+            padding: 50px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        input,
+        select,
+        textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 0;
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        select option {
+            background: var(--charcoal);
+            color: var(--white);
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: -20px;
+            display: none;
+        }
+
+        .book-submit {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .booking-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* Success Modal */
+        #success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--charcoal);
+            padding: 50px;
+            text-align: center;
+            border: 1px solid var(--gold);
+            max-width: 400px;
+            animation: popIn 0.5s;
+        }
+
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            background: #fff;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .qr-placeholder::after {
+            content: 'QR CODE';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            height: 100%;
+            font-weight: bold;
+        }
+
+        /* Dine-In Experience */
+        #experience {
+            padding: 100px 5%;
+            background: var(--charcoal);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background: var(--gold);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+        }
+
+        .timeline-content {
+            padding: 0 30px;
+            position: relative;
+            width: 100%;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            text-align: left;
+        }
+
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: -6px;
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::after {
+            left: -6px;
+            right: auto;
+        }
+
+        .timeline-content h3 {
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .timeline-content p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .map-section {
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .map-container {
+            flex: 1;
+            min-width: 300px;
+            height: 300px;
+            background: var(--charcoal);
+        }
+
+        .amenities {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .amenities ul li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .amenities ul li::before {
+            content: '✧';
+            color: var(--gold);
+            position: absolute;
+            left: 0;
+        }
+
+        /* About Us */
+        #about {
+            padding: 100px 5%;
+            background: #111;
+        }
+
+        .about-wrap {
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-text h2 {
+            color: var(--gold);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .about-img {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .about-img img {
+            width: 100%;
+            object-fit: cover;
+            border: 1px solid var(--gold);
+        }
+
+        .about-img::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--gold);
+            z-index: -1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .stat h4 {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .stat p {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Events */
+        #events {
+            padding: 100px 5%;
+            background: var(--charcoal);
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .event-card {
+            background: #111;
+            padding: 30px;
+            border-left: 3px solid var(--gold);
+            transition: var(--transition);
+        }
+
+        .event-card:hover {
+            transform: translateX(10px);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .event-date {
+            color: var(--gold);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .event-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Gallery */
+        #gallery {
+            padding: 100px 5%;
+            background: #111;
+        }
+
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-filters .filter-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin: 0 10px;
+            transition: 0.3s;
+        }
+
+        .gallery-filters .filter-btn.active,
+        .gallery-filters .filter-btn:hover {
+            color: var(--gold);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            height: 250px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.6);
+        }
+
+        .gallery-item::after {
+            content: 'VIEW';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--white);
+            font-weight: bold;
+            opacity: 0;
+            transition: 0.5s;
+            letter-spacing: 2px;
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        /* Lightbox */
+        #lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 2px solid var(--gold);
+        }
+
+        #lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Testimonials */
+        #testimonials {
+            padding: 100px 5%;
+            background: var(--charcoal);
+            text-align: center;
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            height: 250px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: 1s ease-in-out;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .stars {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .quote {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .author {
+            font-size: 0.9rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer / Contact */
+        footer {
+            background: #0a0a0a;
+            padding: 60px 5% 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-col h3 {
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .footer-col p,
+        .footer-col a {
+            color: #aaa;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .newsletter {
+            display: flex;
+            margin-top: 15px;
+        }
+
+        .newsletter input {
+            border: 1px solid #333;
+            padding: 10px;
+            flex: 1;
+        }
+
+        .newsletter button {
+            background: var(--gold);
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .copyright {
+            text-align: center;
+            color: #555;
+            font-size: 0.8rem;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+        }
+
+        /* Animations Keyframes */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Scroll Animations */
+        .hidden {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.4s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.6s;
+        }
+
+        .delay-4 {
+            transition-delay: 0.8s;
+        }
+
+        /* Responsive */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+        }
+
+        .chat-btn {
+            background: var(--gold);
+            color: #000;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: none;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 300px;
+            background: var(--charcoal);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .chat-panel.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .chat-header {
+            background: var(--gold);
+            color: #000;
+            padding: 10px;
+            font-weight: bold;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header span.close-chat {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chat-body {
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #333;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: transparent;
+            border: none;
+            color: var(--gold);
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        /* Nav Tools Styling */
+        .nav-tools {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .nav-tools button {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-tools button:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .nav-action-btn {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 5px 15px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .nav-action-btn:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* Full Overlay Modals (Order, Loyalty, Staff) */
+        .full-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(42, 27, 24, 0.5);
+            /* Deep charcoal but transparent for glassmorphism */
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .full-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .overlay-box {
+            background: rgba(42, 27, 24, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(230, 178, 138, 0.4);
+            border-radius: 12px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Scarcity Marketing Badges */
+        .limited-badge {
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: #b36050;
+            color: white;
+            padding: 5px 30px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .overlay-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--gold);
+            cursor: pointer;
+        }
+
+        /* Order Online specific */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        /* Dashboard specific */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dash-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .dash-card h4 {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .dash-card h2 {
+            color: var(--white);
+            font-size: 2rem;
+            margin-top: 10px;
+        }
+
+        /* QR Scanner */
+        #qr-reader {
+            width: 100%;
+            height: 250px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #444;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 250px;
+                height: 100vh;
+                background: #111;
+                flex-direction: column;
+                padding: 100px 30px;
+                gap: 40px;
+                transition: 0.4s;
+            }
+
+            .nav-links.active {
+                right: 0;
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: span 1;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 50px;
+                padding-right: 0;
+            }
+
+            .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                text-align: left;
+            }
+
+            .timeline-content::after,
+            .timeline-item:nth-child(even) .timeline-content::after {
+                left: -36px;
+                right: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="noscroll">
+
+    <!-- Welcome Splash -->
+    <div id="welcome-splash" class="door-splash">
+        <div class="door-left"></div>
+        <div class="door-right"></div>
+        <div class="splash-content">
+            <div class="emblem-container">
+                <svg class="konark-wheel" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="50" cy="50" r="45" />
+                    <circle cx="50" cy="50" r="35" stroke-dasharray="2 4" />
+                    <circle cx="50" cy="50" r="10" />
+                    <path
+                        d="M50 5 L50 40 M50 60 L50 95 M5 50 L40 50 M60 50 L95 50 M18 18 L36 36 M64 64 L82 82 M18 82 L36 64 M64 36 L82 18" />
+                </svg>
+            </div>
+            <h1 class="odia-welcome">ସ୍ଵାଗତମ୍</h1>
+            <h2 class="english-welcome">Welcome to Éclat</h2>
+            <p class="splash-desc">"Step into a culinary symphony of timeless Odisha heritage and exquisite
+                Franco-Indian artistry."</p>
+            <div class="splash-enter">
+                <button id="enter-btn" class="btn-gold">Begin the Journey</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particles Background for Hero -->
+    <div id="particles-js"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#hero" class="logo">
+            <!-- Custom SVG Logo -->
+            <svg viewBox="0 0 100 100">
+                <path d="M50 10 C30 10 15 25 10 50 C15 75 30 90 50 90 C70 90 85 75 90 50 C85 25 70 10 50 10 Z"
+                    fill="none" stroke="currentColor" stroke-width="4" />
+                <path d="M35 50 Q50 30 65 50 Q50 70 35 50" fill="currentColor" />
+            </svg>
+            Éclat Bistro
+        </a>
+        <div class="nav-links">
+            <a href="#hero" class="active" data-lang="home">Home</a>
+            <a href="#menu" data-lang="menu">Menu</a>
+            <a href="#book" data-lang="book">Book Table</a>
+            <a href="#experience" data-lang="dinein">Dine-In</a>
+            <a href="#events" data-lang="events">Events</a>
+            <button id="order-btn" class="nav-action-btn" data-lang="order">Order Online</button>
+            <button id="loyalty-btn" class="nav-action-btn" data-lang="loyalty">Loyalty</button>
+            <button id="staff-btn" class="nav-action-btn" data-lang="staff">Staff</button>
+            <button id="auth-btn" class="nav-action-btn" data-lang="signin">Sign In</button>
+            <div class="nav-tools">
+                <button id="voice-btn" title="Voice Search">🎤</button>
+                <button id="lang-btn" title="Toggle Language">EN</button>
+            </div>
+        </div>
+        <div class="hamburger">
+            <span style="display:block;width:25px;height:2px;background:#D4AF37;margin:5px 0;"></span>
+            <span style="display:block;width:25px;height:2px;background:#D4AF37;margin:5px 0;"></span>
+            <span style="display:block;width:25px;height:2px;background:#D4AF37;margin:5px 0;"></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content">
+            <h1>Franco-Indian Symphony on Your Plate</h1>
+            <p>Michelin-inspired fusion in the heart of Bhubaneswar. Experience the art of fine dining.</p>
+            <div class="hero-buttons">
+                <a href="#book" class="btn-gold">Reserve Table</a>
+                <a href="#menu" class="btn-outline">View Menu</a>
+            </div>
+            <div class="wait-time">12 TABLES AVAILABLE TONIGHT</div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu">
+        <h2 class="section-title hidden">Culinary Masterpieces</h2>
+        <div class="search-container hidden delay-1" style="text-align: center; margin-bottom: 30px;">
+            <input type="text" id="menu-search" placeholder="Search our signature dishes..."
+                style="width: 100%; max-width: 400px; padding: 12px 20px; font-size: 1rem; border: 1px solid var(--gold); border-radius: 25px; background: transparent; color: var(--white); outline: none; transition: box-shadow 0.3s;"
+                onfocus="this.style.boxShadow='0 0 10px var(--gold)'" onblur="this.style.boxShadow='none'">
+            <div id="no-results-msg" style="display:none; color: #ff4d4d; margin-top: 15px; font-style: italic;">We're
+                sorry, that dish is currently unavailable.</div>
+        </div>
+        <div class="menu-tabs hidden delay-1">
+            <button class="tab-btn active" data-target="swagata">Swagata</button>
+            <button class="tab-btn" data-target="arambha">Arambha</button>
+            <button class="tab-btn" data-target="niramisa">Niramisa (Veg)</button>
+            <button class="tab-btn" data-target="aamisa">Aamisa (Non-Veg)</button>
+            <button class="tab-btn" data-target="sashya">Sashya</button>
+            <button class="tab-btn" data-target="mitha">Mitha (Desserts)</button>
+        </div>
+
+        <div class="menu-container">
+            <!-- Swagata (Drinks) -->
+            <div class="menu-grid active" id="swagata">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800" alt="Lembu Mishri"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Lembu Mishri Sharbat</h3><span class="dish-price">227 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଲେମ୍ବୁ ମିଶ୍ରି ସର୍ବତ - Fennel Scented, Palm Sugar and Lemon Cooler.</p>
+                        <div class="dietary"><svg class="diet-icon" data-tooltip="Vegetarian" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zM7 11v2h10v-2H7z" />
+                            </svg></div>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800" alt="Dahi Pudina"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Dahi Pudina Sharbat</h3><span class="dish-price">151 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଦହି ପୁଦିନା ସର୍ବତ - Buttermilk Aperitif with Fresh Mint and Roasted Cumin.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arambha (Appetizers) -->
+            <div class="menu-grid" id="arambha">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=800" alt="Torani Kanji"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Torani Kanji</h3><span class="dish-price">261 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ତୋରାଣି କାଞ୍ଜି - Natural Probiotic Soup of Rice Water with Aromatic Bouquet
+                            of Herbs.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800" alt="Posto Nadia Bara"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Posto Nadia Bara</h3><span class="dish-price">890 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ପୋସ୍ତ ନଡ଼ିଆ ବରା - Poppy Seed Cutlet with Fresh Coconut Bits.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Niramisa (Veg Mains) -->
+            <div class="menu-grid" id="niramisa">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=800" alt="Dalma"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Dalma - Signature</h3><span class="dish-price">1134 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଡାଲମା - Authentic Odia lentils cooked with seasonal garden vegetables.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800" alt="Ghanta Tarkari"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Ghanta Tarkari</h3><span class="dish-price">872 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଘାଣ୍ଟ ତରକାରି - A medley of 21+ seasonal vegetables and legumes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aamisa (Non-Veg Mains) -->
+            <div class="menu-grid" id="aamisa">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1516714435131-44d6b64dc3a2?w=800"
+                        alt="Mati Handi Mangsa" class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Mati Handi Mangsa</h3><span class="dish-price">1052 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ମାଟି ହାଣ୍ଡି ମାଂସ - Earthen pot mutton curry cooked over wood charcoal.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <div class="limited-badge">Only 2 Left!</div>
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800" alt="Chingudi Jhola"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Chilika Chingudi Jhola</h3><span class="dish-price">671 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଚିଙ୍ଗୁଡ଼ି ଝୋଳ - Fresh Chilika prawns cooked in traditional onion-tomato
+                            gravy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sashya (Rice & Breads) -->
+            <div class="menu-grid" id="sashya">
+                <div class="dish-card">
+                    <img src="./pakhala.png" alt="Kanika" class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Kanika</h3><span class="dish-price">777 Kcal</span>
+                        </div>
+                        <p class="dish-desc">କାନିକା - Spiced aromatic sweet yellow rice with cashew and raisins.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800" alt="Chakuli"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Chakuli</h3><span class="dish-price">428 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଚକୁଳି - Traditional flatbread made with fermented rice-lentil batter.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mitha (Desserts) -->
+            <div class="menu-grid" id="mitha">
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800" alt="Manda Pitha"
+                        class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Manda Pitha</h3><span class="dish-price">194 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ମଣ୍ଡା ପିଠା - Steamed rice dumplings stuffed with coconut and jaggery.</p>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800"
+                        alt="Kheera Poda Pitha" class="dish-img" loading="lazy">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">Kheera Poda Pitha</h3><span class="dish-price">425 Kcal</span>
+                        </div>
+                        <p class="dish-desc">ଖିର ପୋଡ଼ ପିଠା - Signature baked rice and milk cake from Berhampur.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book a Table -->
+    <section id="book">
+        <h2 class="section-title hidden">Reserve Your Table</h2>
+        <div class="booking-container hidden delay-1">
+            <form id="booking-form">
+                <div class="booking-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required placeholder="Jacques Dupont">
+                        <span class="error-msg">Name is required</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required placeholder="+91 xxxxx xxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="soyam@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="party">Party Size</label>
+                        <input type="number" id="party" min="1" max="12" value="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Time</label>
+                        <select id="time" required>
+                            <option value="">Select Time</option>
+                            <option value="19:00">7:00 PM</option>
+                            <option value="19:30">7:30 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                            <option value="20:30">8:30 PM</option>
+                            <option value="21:00">9:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="area">Seating Area</label>
+                        <select id="area" required>
+                            <option value="">Choose Location</option>
+                            <option value="Main Dining">Main Dining</option>
+                            <option value="Chef's Table">Chef's Table (Interactive)</option>
+                            <option value="Window View">Window View</option>
+                            <option value="The Glass Room">The Glass Room</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label for="requests">Special Requests / Occasion</label>
+                        <textarea id="requests" rows="3" placeholder="Anniversary, allergies, etc."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn-gold book-submit">Confirm Reservation</button>
+                <p class="booking-note">Peak hours: 7-9 PM Fri-Sat (20% surcharge)</p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div id="success-modal">
+        <div class="modal-content">
+            <h3 style="color:var(--gold); margin-bottom:15px; font-family:var(--font-heading); font-size:2rem;">Table
+                Confirmed!</h3>
+            <p>Your reservation for <span id="res-details" style="font-weight:bold; color:#fff;"></span> is secured.</p>
+            <div id="qr-container" style="display:flex; justify-content:center; align-items:center; margin: 20px auto;">
+            </div>
+            <p style="font-size:0.8rem; color:#aaa; margin-bottom:20px;">Present this at the front desk. A confirmation
+                email has been sent.</p>
+            <button class="btn-outline" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Dine-In Experience -->
+    <section id="experience">
+        <h2 class="section-title hidden">The Éclat Experience</h2>
+        <div class="timeline">
+            <div class="timeline-item hidden delay-1">
+                <div class="timeline-content">
+                    <h3>Arrival</h3>
+                    <p>Complimentary valet service and a warm welcome at our ambient lounge.</p>
+                </div>
+            </div>
+            <div class="timeline-item hidden delay-2">
+                <div class="timeline-content">
+                    <h3>Aperitif</h3>
+                    <p>Signature cocktails on the house to awaken your palate.</p>
+                </div>
+            </div>
+            <div class="timeline-item hidden delay-3">
+                <div class="timeline-content">
+                    <h3>Symphony</h3>
+                    <p>Immersive dining with curated playlists and bespoke lighting matching the menu.</p>
+                </div>
+            </div>
+            <div class="timeline-item hidden delay-4">
+                <div class="timeline-content">
+                    <h3>Departure</h3>
+                    <p>Hand-crafted petit fours wrapped for you to take the memory home.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-section hidden delay-1">
+            <div class="map-container">
+                <!-- Fake map visual for design purposes -->
+                <div
+                    style="width:100%; height:100%; background:url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800') center/cover; position:relative; display:flex; align-items:center; justify-content:center;">
+                    <div
+                        style="background:rgba(0,0,0,0.7); padding:20px; text-align:center; border:1px solid var(--gold);">
+                        <h4 style="color:var(--gold); margin-bottom:5px;">Near Lingaraj Temple</h4>
+                        <p style="font-size:0.8rem;">Bhubaneswar, Odisha</p>
+                    </div>
+                </div>
+            </div>
+            <div class="amenities">
+                <ul style="margin-top:20px;">
+                    <li>Exclusive Chef's Table (₹5000/pp)</li>
+                    <li>Sommelier curated 42+ Wines by the glass</li>
+                    <li>Live Jazz & Piano on Weekends</li>
+                    <li>Pet-friendly outdoor patio</li>
+                    <li>Complimentary high-speed WiFi</li>
+                </ul>
+                <button class="btn-outline" style="margin-top:20px; width:100%;"
+                    onclick="alert('Accessing Camera... Initializing 360° AR Chef\'s Table Tour!')">👁️ Launch AR
+                    Virtual Tour</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us -->
+    <section id="about">
+        <div class="about-wrap">
+            <div class="about-text hidden delay-1">
+                <h2>A Tale of Two Worlds</h2>
+                <p>Founded by Chef Arjun Patel, previously of Noma, Éclat Bistro bridges the vibrant, rustic flavors of
+                    Odisha's riverside bounty with the exacting precision of Parisian haute cuisine.</p>
+                <p>We believe in sustainability, sourcing 80% of our ingredients from local farms within a 50km radius,
+                    ensuring zero waste while delivering uncompromised luxury.</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Signatures_of_people.png/320px-Signatures_of_people.png"
+                    alt="Signature"
+                    style="height:50px; filter:invert(1) sepia(1) saturate(5) hue-rotate(10deg); opacity:0.8; margin-top:20px;">
+            </div>
+            <div class="about-img hidden delay-2">
+                <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800" alt="Chef Arjun">
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat">
+                <h4>5000+</h4>
+                <p>Guests Served</p>
+            </div>
+            <div class="stat">
+                <h4>98%</h4>
+                <p>Repeat Rate</p>
+            </div>
+            <div class="stat">
+                <h4>2025</h4>
+                <p>Odisha Foodie Award</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events -->
+    <section id="events">
+        <h2 class="section-title hidden">Events & Private Dining</h2>
+        <div class="events-grid">
+            <div class="event-card hidden delay-1">
+                <div class="event-date">MAR 15, 2026</div>
+                <h3 class="event-title">Bordeaux Wine Tasting</h3>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">A 5-course pairing featuring exclusive
+                    vintages.</p>
+                <span style="color:var(--gold); font-weight:bold;">₹2500 / person</span>
+            </div>
+            <div class="event-card hidden delay-2">
+                <div class="event-date">EVERY FRIDAY</div>
+                <h3 class="event-title">Jazz & Truffles</h3>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Live band and seasonal truffle specials.
+                </p>
+                <span style="color:var(--gold); font-weight:bold;">A la carte</span>
+            </div>
+            <div class="event-card hidden delay-3">
+                <div class="event-date">PRIVATE BOOKINGS</div>
+                <h3 class="event-title">The Glass Room</h3>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Intimate space for up to 12 guests.</p>
+                <a href="#book" style="color:var(--gold); border-bottom:1px solid; font-size:0.9rem;">Inquire Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="gallery">
+        <h2 class="section-title">Visual Symphony</h2>
+        <div class="gallery-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="food">Food</button>
+            <button class="filter-btn" data-filter="interior">Interior</button>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item food"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600"
+                    alt="Food"></div>
+            <div class="gallery-item interior"><img
+                    src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600" alt="Interior"></div>
+            <div class="gallery-item food"><img src="https://images.unsplash.com/photo-1544025162-831ae96d5e1c?w=600"
+                    alt="Food"></div>
+            <div class="gallery-item interior"><img
+                    src="https://images.unsplash.com/photo-1525610553991-2bd720802bd9?w=600" alt="Interior"></div>
+            <div class="gallery-item food"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600"
+                    alt="Food"></div>
+            <div class="gallery-item interior"><img
+                    src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600" alt="Interior"></div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox">
+        <span id="lightbox-close">&times;</span>
+        <img src="" id="lightbox-img" alt="Enlarged view">
+    </div>
+
+    <!-- Testimonials -->
+    <section id="testimonials">
+        <div class="testimonial-slider">
+            <div class="slide active">
+                <div class="stars">★★★★★</div>
+                <p class="quote">"Divine fusion. The way they marry Odia spices with French technique is nothing short
+                    of sorcery."</p>
+                <div class="author">Priya S. - Zomato</div>
+            </div>
+            <div class="slide">
+                <div class="stars">★★★★★</div>
+                <p class="quote">"World-class ambiance. Felt like I was dining in a high-end Parisian bistro but with
+                    the warmth of India."</p>
+                <div class="author">Rahul M. - Local Guide</div>
+            </div>
+            <div class="slide">
+                <div class="stars">★★★★★</div>
+                <p class="quote">"The Duck Confit was life-changing. Worth every penny and the waitlist."</p>
+                <div class="author">Emma T. - Tourist</div>
+            </div>
+        </div>
+    </section>
+    <!-- Modals Layer -->
+    <!-- Order Online Modal -->
+    <div class="full-overlay" id="order-overlay">
+        <div class="overlay-box">
+            <span class="overlay-close" onclick="closeOverlay('order-overlay')">&times;</span>
+            <h2 class="section-title" style="font-size: 2rem;">Order Online</h2>
+            <div id="cart-items">
+                <!-- Hardcoded for display, ideally dynamic -->
+                <div class="cart-item">
+                    <span>Duck Confit Chettinad (x1)</span>
+                    <span>₹2100</span>
+                </div>
+                <div class="cart-item">
+                    <span>Rogan Josh Canneloni (x2)</span>
+                    <span>₹3900</span>
+                </div>
+            </div>
+            <div class="cart-total">Total: ₹6000</div>
+            <div class="form-group" style="margin-top:20px;">
+                <label>Delivery Address</label>
+                <input type="text" id="order-address" placeholder="Start typing address...">
+            </div>
+            <button class="btn-gold" style="width:100%; margin-top:20px;"
+                onclick="processRazorpayPayment()">Pay via Razorpay</button>
+        </div>
+    </div>
+
+    <!-- Loyalty Modal -->
+    <div class="full-overlay" id="loyalty-overlay">
+        <div class="overlay-box" style="text-align: center; max-width: 480px;">
+            <span class="overlay-close" onclick="stopLoyaltyScanner(); closeOverlay('loyalty-overlay')">×</span>
+            <h2 class="section-title" style="font-size: 2rem;">Éclat Prestige</h2>
+            <p style="margin-bottom:20px; color:#aaa;">Scan a bill QR code to earn points, or present your card to redeem.</p>
+            <!-- html5-qrcode renders into this div -->
+            <div id="qr-reader" style="width:100%; border-radius:8px; overflow:hidden;"></div>
+            <div id="qr-reader-result" style="margin-top:12px; min-height:24px; font-size:0.9rem; color:var(--gold);"></div>
+            <h3 style="margin-top:20px; color:var(--gold);">Your Balance: 4,500 pts</h3>
+            <button class="btn-outline" style="margin-top:20px;">Redeem 1000 pts (₹500 off)</button>
+        </div>
+    </div>
+
+    <!-- Staff Portal Login & Dashboard -->
+    <div class="full-overlay" id="staff-overlay">
+        <div class="overlay-box" id="staff-login-box">
+            <span class="overlay-close" onclick="closeOverlay('staff-overlay')">&times;</span>
+            <h2 class="section-title" style="font-size: 2rem;">Staff Portal</h2>
+            <div class="form-group">
+                <input type="password" id="staff-password" placeholder="Enter Staff Password"
+                    style="text-align: center;">
+            </div>
+            <button class="btn-gold" style="width:100%; margin-top:20px;" onclick="verifyStaff()">Access
+                Dashboard</button>
+        </div>
+
+        <div class="overlay-box" id="staff-dashboard" style="display:none; max-width:800px;">
+            <span class="overlay-close" onclick="closeOverlay('staff-overlay')">&times;</span>
+            <h2 class="section-title" style="font-size: 2rem; margin-bottom:1rem;">Live Dashboard</h2>
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <h4>Today's Revenue</h4>
+                    <h2>₹42,500</h2>
+                </div>
+                <div class="dash-card">
+                    <h4>Bookings</h4>
+                    <h2>14</h2>
+                </div>
+                <div class="dash-card">
+                    <h4>Trending</h4>
+                    <h2>Scallops</h2>
+                </div>
+            </div>
+            <h3 style="color:var(--gold); margin-bottom:10px;">Recent Live Bookings</h3>
+            <ul style="color:#ddd; font-size:0.9rem;">
+                <li style="padding:10px; border-bottom:1px solid #333;">Table 4 - Priya S. (2 Guests) - 8:00 PM</li>
+                <li style="padding:10px; border-bottom:1px solid #333;">Table 12 - Arjun P. (4 Guests) - 8:30 PM</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Auth Portal Login & Dashboard -->
+    <div class="full-overlay" id="auth-overlay">
+        <div class="overlay-box" id="auth-login-box">
+            <span class="overlay-close" onclick="closeOverlay('auth-overlay')">&times;</span>
+            <h2 class="section-title" id="auth-title" style="font-size: 2rem;">Sign In</h2>
+            <div class="form-group" id="auth-name-group" style="display:none;">
+                <input type="text" id="auth-name" placeholder="Full Name" style="text-align: center;">
+            </div>
+            <div class="form-group">
+                <input type="email" id="auth-email" placeholder="Email Address" style="text-align: center;">
+            </div>
+            <div class="form-group">
+                <input type="password" id="auth-password" placeholder="Password" style="text-align: center;">
+            </div>
+            <button class="btn-gold" style="width:100%; margin-top:20px;" onclick="submitAuth()">Continue</button>
+            <button class="btn-outline" style="width:100%; margin-top:10px; border-color:#555; color:#fff;"
+                onclick="alert('Biometric WebAuthn API engaged. Please authenticate using FaceID/TouchID.')">📱 Sign In
+                with FaceID / TouchID</button>
+            <p style="text-align:center; margin-top:15px; cursor:pointer; color:var(--gold);" onclick="toggleAuthMode()"
+                id="auth-toggle-txt">Don't have an account? Sign Up</p>
+        </div>
+
+        <div class="overlay-box" id="user-dashboard" style="display:none; max-width:800px;">
+            <span class="overlay-close" onclick="closeOverlay('auth-overlay')">&times;</span>
+            <h2 class="section-title" style="font-size: 2rem; margin-bottom:1rem;">Welcome, <span
+                    id="user-name-display"></span></h2>
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <h4>Loyalty Points</h4>
+                    <h2>1,200</h2>
+                </div>
+                <div class="dash-card">
+                    <h4>Past Orders</h4>
+                    <h2>3</h2>
+                </div>
+            </div>
+            <button class="btn-outline" style="width:100%; margin-top:20px;" onclick="logoutUser()">Log Out</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col" id="contact">
+                <h3>Contact</h3>
+                <p>123 Heritage Strip, Near Lingaraj</p>
+                <p>Bhubaneswar, Odisha 751002</p>
+                <p>+91 674 123 4567</p>
+                <p>bonjour@eclatbistro.in</p>
+            </div>
+            <div class="footer-col">
+                <h3>Hours</h3>
+                <p>Tue - Sun: 18:00 - 23:30</p>
+                <p>Lunch (Sat-Sun): 12:00 - 15:00</p>
+                <p style="color:var(--gold);">Monday Closed</p>
+            </div>
+            <div class="footer-col">
+                <h3>Connect</h3>
+                <div class="social-icons">
+                    <a href="#">IG</a>
+                    <a href="#">FB</a>
+                    <a href="#">X</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Newsletter</h3>
+                <p>Exclusive recipes and hidden chef menus.</p>
+                <div class="newsletter">
+                    <input type="email" placeholder="Your email">
+                    <button>Join</button>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 Éclat Bistro. All rights reserved. | <a href="#" style="text-decoration:underline;">Privacy
+                Policy</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Razorpay Checkout -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- html5-qrcode for Loyalty Scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- qrcode.js for PERMANENT local QR code generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- GSAP for Smooth Scub Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Subtle GSAP Parallax on the Welcome Wheel
+        gsap.to(".konark-wheel", {
+            scrollTrigger: {
+                trigger: "#hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: 1
+            },
+            y: 200,
+            rotation: 360,
+            opacity: 0,
+            ease: "none"
+        });
+
+        // AI Pairing Engine Listener
+        document.querySelectorAll('.dish-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const title = card.querySelector('.dish-title').innerText;
+                const isVeg = card.innerHTML.includes('Vegetarian');
+                const isDessert = title.includes('Pitha');
+
+                let pairing = "a classic Bordeaux Vintage";
+                if (isVeg) pairing = "Lembu Mishri Sharbat";
+                if (isDessert) pairing = "a shot of French Cognac";
+
+                // Lightweight toast notification instead of alert for better UX
+                const toast = document.createElement('div');
+                toast.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--gold); color:#000; padding:15px 25px; border-radius:30px; z-index:99999; font-weight:bold; box-shadow:0 10px 20px rgba(0,0,0,0.5); animation:popIn 0.5s; cursor:pointer;";
+                toast.innerHTML = `🤖 <b>AI Pairing:</b> We recommend matching the <i>${title}</i> with ${pairing}. (Click to dismiss)`;
+                toast.onclick = () => toast.remove();
+
+                document.body.appendChild(toast);
+                setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
+            });
+        });
+
+        // Set minimum date for booking calendar
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+
+            // Highlight active link
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            sections.forEach(sec => {
+                const sectionTop = sec.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = sec.getAttribute('id');
+                }
+            });
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
+        });
+
+        // Mobile Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Menu Tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const grids = document.querySelectorAll('.menu-grid');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                grids.forEach(g => g.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+
+                // Clear search when changing tabs
+                document.getElementById('menu-search').value = '';
+                document.querySelectorAll('.dish-card').forEach(dish => dish.style.display = 'block');
+                document.getElementById('no-results-msg').style.display = 'none';
+            });
+        });
+
+        // Menu Search Logic
+        document.getElementById('menu-search').addEventListener('input', function (e) {
+            const term = e.target.value.toLowerCase();
+            const activeGrid = document.querySelector('.menu-grid.active');
+            const dishesInActiveGrid = activeGrid.querySelectorAll('.dish-card');
+            let found = false;
+
+            dishesInActiveGrid.forEach(dish => {
+                const title = dish.querySelector('.dish-title').innerText.toLowerCase();
+                const desc = dish.querySelector('.dish-desc') ? dish.querySelector('.dish-desc').innerText.toLowerCase() : '';
+                if (title.includes(term) || desc.includes(term)) {
+                    dish.style.display = 'block';
+                    found = true;
+                } else {
+                    dish.style.display = 'none';
+                }
+            });
+
+            document.getElementById('no-results-msg').style.display = found ? 'none' : 'block';
+        });
+
+        // Gallery Filters
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.classList.contains(filter)) {
+                        item.style.display = 'block';
+                        setTimeout(() => { item.style.opacity = '1'; }, 50);
+                    } else {
+                        item.style.opacity = '0';
+                        setTimeout(() => { item.style.display = 'none'; }, 300);
+                    }
+                });
+            });
+        });
+
+        // Lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const img = item.querySelector('img').src;
+                lightboxImg.src = img;
+                lightbox.style.display = 'flex';
+            });
+        });
+        document.getElementById('lightbox-close').addEventListener('click', () => {
+            lightbox.style.display = 'none';
+        });
+
+        // Testimonial Carousel
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+
+        // Booking Form Submission
+        document.getElementById('booking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const party = document.getElementById('party').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const requests = document.getElementById('requests').value;
+            const area = document.getElementById('area').value;
+
+            document.getElementById('res-details').innerText = `${party} Guests in ${area || 'Main Dining'} on ${date}`;
+
+            const bookingData = { name, phone, email, partySize: parseInt(party), date, time, requests, area };
+            const base64Data = btoa(JSON.stringify(bookingData));
+
+            let previewEmailBtnHtml = '';
+            try {
+                // Send booking to the backend to trigger email & DB storage
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                if (!response.ok) {
+                    console.error('Server error creating booking');
+                } else {
+                    const data = await response.json();
+                    if (data.previewUrl) {
+                        previewEmailBtnHtml = `<div style="margin-top:20px;"><a href="${data.previewUrl}" target="_blank" class="btn-gold" style="display:inline-block; text-decoration:none;">Open Test Email Notification</a></div>`;
+                    }
+                }
+            } catch (err) {
+                console.error('Could not reach backend API for booking:', err);
+            }
+
+            // Fetch actual external IP of machine dynamically so mobile scanning isn't broken
+            let currentOrigin = window.location.origin;
+            if (currentOrigin === 'null' || currentOrigin.startsWith('file://') || currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1')) {
+                try {
+                    const portMatch = currentOrigin.match(/:(\d+)/);
+                    const port = portMatch ? portMatch[1] : '5000';
+                    const ipReq = await fetch('/api/device-ip');
+                    const ipData = await ipReq.json();
+                    currentOrigin = `http://${ipData.ip}:${port}`;
+                } catch(e) {
+                    currentOrigin = 'http://192.168.1.100:5000'; // fallback LAN IP
+                }
+            }
+            const devUrl = `${currentOrigin}/ticket.html?data=${encodeURIComponent(base64Data)}`;
+            const qrSize = 160;
+
+            // Generate locally via QRCode.js for a permanent fix unreliant on an API
+            const qrContainer = document.getElementById('qr-container');
+            qrContainer.innerHTML = `
+                <div style="text-align:center;">
+                    <div id="qr-img-div" style="display:inline-block; border:2px solid var(--gold); border-radius:8px; padding:5px; background:white; cursor:pointer; transition:transform 0.2s;"
+                        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"></div>
+                    <p style="font-size:0.75rem;color:#aaa;margin-top:8px;">Scan with your phone camera</p>
+                    <a href="${devUrl}" target="_blank"
+                        style="display:inline-block;margin-top:10px;padding:8px 20px;background:var(--gold);color:#1a1a1a;font-weight:600;font-size:0.85rem;border-radius:20px;text-decoration:none;transition:opacity 0.2s;"
+                        onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                        🎟️ View Digital Ticket
+                    </a>
+                    ${previewEmailBtnHtml}
+                </div>`;
+
+            document.getElementById('success-modal').style.display = 'flex';
+
+            // Empty it just in case, then generate
+            const qrElement = document.getElementById("qr-img-div");
+            qrElement.innerHTML = '';
+            new QRCode(qrElement, {
+                text: devUrl,
+                width: qrSize,
+                height: qrSize,
+                colorDark : "#1a1a1a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            // Save to localStorage as requested
+            localStorage.setItem('eclat_booking', JSON.stringify({ name, date, time, party }));
+
+            form.reset();
+        });
+
+        function closeModal() {
+            document.getElementById('success-modal').style.display = 'none';
+        }
+
+        async function processRazorpayPayment() {
+            const amount = 6000; // Hardcoded from UI for now (6000 total)
+            const address = document.getElementById('order-address').value;
+            if (!address) {
+                alert("Please enter a delivery address");
+                return;
+            }
+
+            try {
+                // 1. Create order on backend
+                const response = await fetch('/api/orders/create-razorpay-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+                const orderData = await response.json();
+
+                // 2. Initialize Razorpay
+                const options = {
+                    key: 'rzp_test_YourTestKeyId', // Use env or test key
+                    amount: orderData.amount,
+                    currency: orderData.currency,
+                    name: 'Éclat Bistro',
+                    description: 'Online Order Payment',
+                    order_id: orderData.id,
+                    handler: async function (response) {
+                        try {
+                            const verifyRes = await fetch('/api/orders/verify', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    orderData: {
+                                        customerName: "Guest User",
+                                        address: address,
+                                        items: [
+                                            { name: "Duck Confit Chettinad", price: 2100, quantity: 1 },
+                                            { name: "Rogan Josh Canneloni", price: 1950, quantity: 2 }
+                                        ],
+                                        totalAmount: amount,
+                                        status: 'preparing'
+                                    }
+                                })
+                            });
+                            
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok) {
+                                alert("Order Placed Successfully!");
+                                // Close modal if implemented as closeOverlay
+                                const overlay = document.getElementById('order-overlay');
+                                if(overlay) overlay.style.display = 'none';
+                            } else {
+                                alert("Payment verification failed: " + verifyData.message);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Error verifying payment");
+                        }
+                    },
+                    prefill: {
+                        name: 'Guest User',
+                        email: 'guest@example.com',
+                        contact: '9999999999'
+                    },
+                    theme: {
+                        color: '#D4AF37'
+                    }
+                };
+
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            } catch (err) {
+                console.error(err);
+                alert("Error initializing payment");
+            }
+        }
+
+        // Simple Particles representation using canvas (lightweight)
+        const canvas = document.createElement('canvas');
+        document.getElementById('particles-js').appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2,
+                color: 'rgba(212, 175, 55, ' + Math.random() + ')',
+                speedX: Math.random() * 1 - 0.5,
+                speedY: Math.random() * 1 - 0.5
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                p.x += p.speedX; p.y += p.speedY;
+                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Intersection Observer for Scroll Animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.hidden').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Welcome Splash Dismissal
+        document.getElementById('enter-btn').addEventListener('click', () => {
+            document.getElementById('welcome-splash').classList.add('out');
+            document.body.classList.remove('noscroll');
+            setTimeout(() => {
+                document.body.classList.add('hero-play');
+                setTimeout(() => document.getElementById('welcome-splash').style.display = 'none', 500);
+            }, 1000);
+        });
+
+        // ------------------ NEW ENTERPRISE FEATURES ------------------
+
+        // Modal Overlay Logic
+        function closeOverlay(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        document.getElementById('order-btn').addEventListener('click', () => document.getElementById('order-overlay').classList.add('active'));
+
+        let html5QrScanner = null;
+
+        function stopLoyaltyScanner() {
+            if (html5QrScanner) {
+                try {
+                    html5QrScanner.clear();
+                    html5QrScanner = null;
+                } catch (e) {}
+            }
+        }
+
+        document.getElementById('loyalty-btn').addEventListener('click', () => {
+            document.getElementById('loyalty-overlay').classList.add('active');
+            const resultEl = document.getElementById('qr-reader-result');
+            resultEl.innerHTML = 'Initialising camera... Please select a camera from the menu.';
+
+            // Small delay to allow overlay to render before html5-qrcode attaches
+            setTimeout(() => {
+                if (html5QrScanner) stopLoyaltyScanner();
+
+                // PERMANENT FIX: Html5QrcodeScanner natively handles multiple cameras (including missing back-cameras on laptops) without crashing.
+                html5QrScanner = new Html5QrcodeScanner(
+                    "qr-reader",
+                    { fps: 10, qrbox: { width: 220, height: 220 } },
+                    /* verbose= */ false
+                );
+                
+                html5QrScanner.render((decodedText, decodedResult) => {
+                    stopLoyaltyScanner();
+                    resultEl.innerHTML = `✅ <strong>Scanned:</strong> ${decodedText}`;
+                    // Award points mock
+                    setTimeout(() => {
+                        resultEl.innerHTML = `🏆 <strong>+500 pts earned!</strong> Balance updated.`;
+                    }, 1500);
+                }, (errorMessage) => {
+                    // ignore continuous camera scan failure logs
+                });
+            }, 300);
+        });
+
+        document.getElementById('staff-btn').addEventListener('click', () => {
+            document.getElementById('staff-overlay').classList.add('active');
+            document.getElementById('staff-login-box').style.display = 'block';
+            document.getElementById('staff-dashboard').style.display = 'none';
+        });
+
+        function verifyStaff() {
+            const pwd = document.getElementById('staff-password').value;
+            if (pwd === 'staff2026') {
+                document.getElementById('staff-login-box').style.display = 'none';
+                document.getElementById('staff-dashboard').style.display = 'block';
+                // Trigger backend fetch for Live Dashboard
+                fetch('/api/orders/stats')
+                    .then(res => res.json())
+                    .then(data => console.log('Live data:', data))
+                    .catch(e => console.log('Mock Dashboard data displayed instead. Backend offline.'));
+            } else {
+                alert('Invalid Credentials');
+            }
+        }
+
+        // Voice Search 
+        document.getElementById('voice-btn').addEventListener('click', () => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) return alert("Browser does not support Voice Search.");
+            const recognition = new SpeechRecognition();
+            const btn = document.getElementById('voice-btn');
+
+            // Visual indicator when recording starts instead of blocking `alert`
+            recognition.onstart = () => {
+                btn.style.color = 'red';
+                // Using a temporary toast-like visual via title to avoid halting the JS thread
+                btn.title = 'Listening... Try saying "Book table", "Menu", or "Order".';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                console.log('Voice Command Received:', transcript);
+
+                let handled = false;
+
+                if (transcript.includes('book') || transcript.includes('reserve') || transcript.includes('table')) {
+                    window.location.hash = '#book';
+                    document.getElementById('requests').value = "Voice Notes: " + transcript;
+                    handled = true;
+                } else if (transcript.includes('menu') || transcript.includes('food')) {
+                    window.location.hash = '#menu';
+                    handled = true;
+                } else if (transcript.includes('order')) {
+                    document.getElementById('order-btn').click();
+                    handled = true;
+                } else if (transcript.includes('staff')) {
+                    document.getElementById('staff-btn').click();
+                    handled = true;
+                } else if (transcript.includes('login') || transcript.includes('sign in') || transcript.includes('auth')) {
+                    document.getElementById('auth-btn').click();
+                    handled = true;
+                } else if (transcript.includes('loyalty') || transcript.includes('points')) {
+                    document.getElementById('loyalty-btn').click();
+                    handled = true;
+                } else if (transcript.includes('event')) {
+                    window.location.hash = '#events';
+                    handled = true;
+                } else if (transcript.includes('home')) {
+                    window.location.hash = '#hero';
+                    handled = true;
+                }
+
+                if (handled) {
+                    // Small delay to allow navigation to complete before alerting
+                    setTimeout(() => alert('Successfully executed voice command: "' + transcript + '"'), 100);
+                } else {
+                    alert('Sorry, I did not understand that command. I heard: "' + transcript + '"\n\nTry saying: "Menu", "Book a table", "Order online", or "Sign In".');
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Microphone access blocked. Please click the camera/mic icon in your browser URL bar to allow access.');
+                } else if (event.error === 'no-speech') {
+                    alert('No speech was detected. Please make sure your microphone is plugged in and you speak clearly after the icon turns red.');
+                } else if (event.error === 'network') {
+                    alert('Network error. Voice search requires an active internet connection to process speech.');
+                } else {
+                    alert('Speech recognition failed. Error: ' + event.error);
+                }
+
+                // Reset button appearance on error too
+                btn.style.color = '';
+                btn.title = 'Voice Search';
+            };
+
+            recognition.onend = () => {
+                // Reset button appearance
+                btn.style.color = '';
+                btn.title = 'Voice Search';
+            };
+
+            recognition.start();
+        });
+
+        // Multi-Language Toggle (i18n mock)
+        const i18n = {
+            'EN': { home: 'Home', menu: 'Menu', book: 'Book Table', dinein: 'Dine-In', events: 'Events', order: 'Order Online', loyalty: 'Loyalty', staff: 'Staff' },
+            'HI': { home: 'मुख्य पृष्ठ', menu: 'मेन्यू', book: 'टेबल बुक करें', dinein: 'डाइन-इन', events: 'आयोजन', order: 'ऑर्डर', loyalty: 'लॉयल्टी', staff: 'स्टाफ' }
+        };
+        let currentLang = 'EN';
+        document.getElementById('lang-btn').addEventListener('click', (e) => {
+            currentLang = currentLang === 'EN' ? 'HI' : 'EN';
+            e.target.innerText = currentLang;
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.getAttribute('data-lang');
+                if (i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
+            });
+        });
+
+        // Authentication System
+        let isSignUpMode = false;
+
+        document.getElementById('auth-btn').addEventListener('click', () => {
+            const token = localStorage.getItem('eclat_token');
+            const userName = localStorage.getItem('eclat_user_name');
+            document.getElementById('auth-overlay').classList.add('active');
+            if (token && userName) {
+                document.getElementById('auth-login-box').style.display = 'none';
+                document.getElementById('user-dashboard').style.display = 'block';
+                document.getElementById('user-name-display').innerText = userName;
+            } else {
+                document.getElementById('auth-login-box').style.display = 'block';
+                document.getElementById('user-dashboard').style.display = 'none';
+            }
+        });
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'Sign Up' : 'Sign In';
+            document.getElementById('auth-name-group').style.display = isSignUpMode ? 'block' : 'none';
+            document.getElementById('auth-toggle-txt').innerText = isSignUpMode ? 'Already have an account? Sign In' : "Don't have an account? Sign Up";
+        }
+
+        async function submitAuth() {
+            const name = document.getElementById('auth-name').value;
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const endpoint = isSignUpMode ? '/api/auth/register' : '/api/auth/login';
+            const body = isSignUpMode ? { name, email, password } : { email, password };
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('eclat_token', data.token);
+                    localStorage.setItem('eclat_user_name', data.user.name);
+
+                    document.getElementById('auth-login-box').style.display = 'none';
+                    document.getElementById('user-dashboard').style.display = 'block';
+                    document.getElementById('user-name-display').innerText = data.user.name;
+                    document.getElementById('auth-btn').innerText = data.user.name;
+                    alert('Success! Welcome to Éclat Bistro.');
+                } else {
+                    alert(data.msg || 'Authentication failed');
+                }
+            } catch (e) {
+                console.error('Auth error', e);
+                console.log('Backend offline. Using mock authentication flow.');
+
+                // Mock Authentication Flow
+                const mockName = isSignUpMode ? name : (localStorage.getItem('eclat_mock_name') || 'Guest User');
+                if (isSignUpMode) {
+                    localStorage.setItem('eclat_mock_name', name);
+                }
+
+                // Simulate a successful sign up/login
+                localStorage.setItem('eclat_token', 'mock_jwt_token_123');
+                localStorage.setItem('eclat_user_name', mockName);
+
+                document.getElementById('auth-login-box').style.display = 'none';
+                document.getElementById('user-dashboard').style.display = 'block';
+                document.getElementById('user-name-display').innerText = mockName;
+                document.getElementById('auth-btn').innerText = mockName;
+
+                alert('Offline Mode: Successfully Signed ' + (isSignUpMode ? 'Up' : 'In') + '! Welcome, ' + mockName + '.');
+            }
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('eclat_token');
+            localStorage.removeItem('eclat_user_name');
+            document.getElementById('auth-btn').innerText = 'Sign In';
+            closeOverlay('auth-overlay');
+        }
+
+        // Initial setup for auth btn
+        if (localStorage.getItem('eclat_user_name')) {
+            document.getElementById('auth-btn').innerText = localStorage.getItem('eclat_user_name');
+        }
+
+    </script>
+</body>
+
+</html>
